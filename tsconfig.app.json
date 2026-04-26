@@ -10,18 +10,17 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": "src",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/composables/*": ["composables/*"],
-      "@/entities/*": ["entities/*"],
-      "@/features/*": ["features/*"],
-      "@/helpers/*": ["helpers/*"],
-      "@/route/*": ["route/*"],
-      "@/services/*": ["services/*"],
-      "@/store/*": ["store/*"],
-      "@/utils/*": ["utils/*"],
-      "@/views/*": ["views/*"]
+      "@/components/*": ["./src/components/*"],
+      "@/composables/*": ["./src/composables/*"],
+      "@/entities/*": ["./src/entities/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/helpers/*": ["./src/helpers/*"],
+      "@/route/*": ["./src/route/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/store/*": ["./src/store/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/views/*": ["./src/views/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]

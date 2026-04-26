@@ -18,7 +18,7 @@
                     </p>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-3 md:mb-4">Quick Links</h4>
+                    <h3 class="font-bold mb-3 md:mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-xs md:text-sm text-secondary">
                         <li><a href="#" class="hover:text-primary transition-colors">Active Draws</a></li>
                         <li><a href="#" class="hover:text-primary transition-colors">Past Winners</a></li>
@@ -27,7 +27,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-3 md:mb-4">Legal</h4>
+                    <h3 class="font-bold mb-3 md:mb-4">Legal</h3>
                     <ul class="space-y-2 text-xs md:text-sm text-secondary">
                         <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
                         <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>

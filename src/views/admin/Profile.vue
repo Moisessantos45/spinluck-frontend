@@ -48,36 +48,36 @@
 
                 <div class="space-y-6">
                     <div
-                        class="flex items-center justify-between p-4 bg-surface-variant/30 rounded-xl border border-outline-variant/20">
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-surface-variant/30 rounded-xl border border-outline-variant/20">
                         <div>
                             <p class="text-sm font-bold text-primary">Confirmación de Correo</p>
                             <p class="text-[10px] text-secondary font-bold uppercase tracking-widest mt-1">
-                                Tu dircción de correo es solo de lectura
+                                Tu dirección de correo es solo de lectura
                             </p>
                         </div>
                         <span
-                            class="px-3 py-1 bg-surface border border-outline-variant/20 text-primary text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm flex items-center gap-1.5">
+                            class="px-3 py-2 bg-surface border border-outline-variant/20 text-primary text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm flex items-center justify-center gap-1.5 w-full md:w-auto overflow-hidden">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="w-4 h-4">
+                                stroke="currentColor" class="w-4 h-4 shrink-0">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.909A2.25 2.25 0 0 1 2.25 8.993V6.75m19.5 0V8.99" />
                             </svg>
 
-                            {{ authData.email }}
+                            <span class="truncate">{{ authData.email }}</span>
                         </span>
                     </div>
 
                     <div
-                        class="flex items-center justify-between p-4 bg-surface-variant/30 rounded-xl border border-outline-variant/20">
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-surface-variant/30 rounded-xl border border-outline-variant/20">
                         <div>
                             <p class="text-sm font-bold text-primary">Confirmación de Correo</p>
                             <p class="text-[10px] text-secondary font-bold uppercase tracking-widest mt-1">Tu dirección
                                 ha sido verificada</p>
                         </div>
                         <span
-                            class="px-3 py-1 bg-surface border border-outline-variant/20 text-primary text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm flex items-center gap-1.5">
+                            class="px-3 py-2 bg-surface border border-outline-variant/20 text-primary text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm flex items-center justify-center gap-1.5 w-full md:w-auto shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                stroke="currentColor" class="w-3 h-3">
+                                stroke="currentColor" class="w-3 h-3 shrink-0">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                             </svg>
                             {{ authData.emailConfirmed ? "Verificado" : "No Verificado" }}
@@ -85,7 +85,7 @@
                     </div>
 
                     <div
-                        class="flex items-center justify-between p-4 bg-surface-variant/30 rounded-xl border border-outline-variant/20">
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-surface-variant/30 rounded-xl border border-outline-variant/20">
                         <div>
                             <p class="text-sm font-bold text-primary">
                                 Autenticación de Dos Factores (2FA)
@@ -96,8 +96,8 @@
                         </div>
                         <button type="button"
                             @click="authData.twoFactorEnabled ? handleDisableTwoFactor() : $router.push({ name: 'generate-two-factor' })"
-                            class="px-4 py-2 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm hover:opacity-90 transition-opacity">
-                            Configurar 2FA
+                            class="px-4 py-2 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-sm hover:opacity-90 transition-opacity w-full md:w-auto shrink-0">
+                            {{ authData.twoFactorEnabled ? "Deshabilitar 2FA" : "Configurar 2FA" }}
                         </button>
                     </div>
 

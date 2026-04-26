@@ -17,7 +17,7 @@
           <h1 class="text-2xl font-semibold text-slate-900 tracking-tight mb-2">
             Verifica tu cuenta
           </h1>
-          <Alert v-if="alertMessage.msg" :error="true" :msg="alertMessage.msg" />
+          <Alert v-if="alertMessage.msg" :error="alertMessage.error" :msg="alertMessage.msg" />
         </div>
 
         <div class="px-6 pb-10 sm:px-10 shrink-0">

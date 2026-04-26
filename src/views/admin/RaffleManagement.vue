@@ -63,8 +63,8 @@
                             </div>
 
                             <div
-                                class="flex flex-wrap sm:flex-nowrap items-center justify-between w-full lg:w-auto gap-5 lg:gap-8 mt-4 lg:mt-0">
-                                <div class="min-w-35 flex-1">
+                                class="flex flex-col sm:flex-row lg:flex-nowrap items-stretch sm:items-center justify-between w-full lg:w-auto gap-4 lg:gap-8 mt-4 lg:mt-0">
+                                <div class="min-w-35 w-full sm:flex-1">
                                     <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">
                                         Progreso
                                     </p>
@@ -76,14 +76,14 @@
                                         {{ getNormalizedProgress(raffle.progress) }}% vendido
                                     </p>
                                 </div>
-                                <div class="text-right flex flex-col items-end gap-2 shrink-0">
+                                <div class="w-full sm:w-auto text-left sm:text-right flex flex-col items-start sm:items-end gap-2 shrink-0">
                                     <p class="text-lg font-black tracking-tight text-primary">
                                         ${{ raffle.totalAmount }}
                                     </p>
                                     <p class="text-[10px] text-secondary font-bold uppercase tracking-widest mt-1">
                                         Bolsa actual
                                     </p>
-                                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                                    <div class="grid grid-cols-1 sm:flex sm:flex-row gap-2 w-full">
                                         <button
                                             @click="$router.push({ name: 'dashboard-manage-numbers', params: { id: raffle.id } })"
                                             class="px-3.5 py-2 rounded-lg border border-primary bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity w-full sm:w-auto">
@@ -93,6 +93,11 @@
                                             @click="$router.push({ name: 'dashboard-add-raffle', query: { raffle: raffle.id } })"
                                             class="px-3.5 py-2 rounded-lg border border-outline-variant/30 bg-background text-primary text-[10px] font-bold uppercase tracking-widest hover:border-primary/40 transition-colors w-full sm:w-auto">
                                             Editar
+                                        </button>
+                                        <button
+                                            @click="openPublicRaffle(raffle.slug)"
+                                            class="px-3.5 py-2 rounded-lg border border-outline-variant/30 bg-background text-primary text-[10px] font-bold uppercase tracking-widest hover:border-primary/40 transition-colors w-full sm:w-auto">
+                                            Compartir
                                         </button>
                                     </div>
                                 </div>
@@ -113,10 +118,12 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
 import useRaffleStore from '@/store/raffle';
 
 const raffleStore = useRaffleStore();
 const { rafflesGenerics, loading } = storeToRefs(raffleStore);
+const router = useRouter();
 
 const getNormalizedProgress = (progress: number | string | null | undefined) => {
     const numericProgress = Number(progress);
@@ -126,6 +133,15 @@ const getNormalizedProgress = (progress: number | string | null | undefined) => 
     }
 
     return Math.min(100, Math.max(0, Math.round(numericProgress)));
+};
+
+const openPublicRaffle = (slug: string) => {
+    const routeData = router.resolve({
+        name: 'raffle-public',
+        params: { slug },
+    });
+
+    window.open(routeData.href, '_blank', 'noopener,noreferrer');
 };
 
 

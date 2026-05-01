@@ -1,13 +1,23 @@
 <template>
-    <div class="mb-12">
+    <div class="mb-6">
         <h2 class="text-3xl font-bold tracking-tighter leading-none mb-2 text-primary">Perfil del Organizador</h2>
         <p class="text-secondary text-sm tracking-wide uppercase font-bold">Gestiona tu identidad y seguridad de la
             cuenta</p>
     </div>
 
     <div class="flex flex-col gap-8">
-        <div class=" space-y-8">
-            <Alert v-if="alertMessage.msg" :msg="alertMessage.msg" :error="alertMessage.error" />
+        <div class="space-y-8">
+            <div v-if="!authenticated"
+                class="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-start gap-3 text-yellow-600 dark:text-yellow-400 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5 shrink-0 mt-0.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p class="text-sm font-bold leading-relaxed">Primero debe completar su perfil rellenando sus datos
+                    personales para poder habilitar el sistema.</p>
+            </div>
+
             <div class="bg-surface border border-outline-variant/20 rounded-2xl p-8 shadow-sm">
                 <h3 class="text-lg font-black tracking-tight text-primary mb-6 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -136,7 +146,6 @@
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToast } from "vue-toastification";
-import Alert from '@/components/molecules/Alert.vue';
 import InputField from '@/components/molecules/InputField.vue';
 import { useApiResult } from '@/composables/useApiResult';
 import useOrganizerStore from '@/store/organizer';
@@ -146,7 +155,7 @@ const toast = useToast();
 const { loading: organizerLoading, alertMessage } = useApiResult();
 const authStore = useAuthStore();
 const organizerStore = useOrganizerStore();
-const { authData } = storeToRefs(authStore);
+const { authData, authenticated } = storeToRefs(authStore);
 const { dataForm } = storeToRefs(organizerStore);
 const currentPassword = ref('');
 const newPassword = ref('');

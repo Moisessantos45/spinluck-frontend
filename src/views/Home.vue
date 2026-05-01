@@ -31,8 +31,8 @@
                         </h1>
 
                         <p class="mt-5 text-base md:text-lg text-secondary leading-relaxed max-w-xl mx-auto lg:mx-0">
-                            Sorteos premium, transparentes y en vivo. En SpinLuck puedes participar por autos,
-                            tecnología y efectivo con una experiencia rápida, segura y verificable.
+                            Sorteos premium y transparentes. En SpinLuck puedes participar por autos,
+                            tecnología y efectivo con una experiencia rápida, segura y respaldada por el organizador.
                         </p>
 
                         <div class="mt-8 flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start">
@@ -78,8 +78,8 @@
                                 <div class="flex items-center justify-between">
                                     <p class="text-xs font-bold uppercase tracking-widest text-secondary">Sorteo
                                         destacado</p>
-                                    <span aria-label="Sorteo en vivo ahora"
-                                        class="px-2.5 py-1 rounded-full bg-accent/20 text-[10px] font-bold tracking-[0.16em] uppercase text-primary">Live</span>
+                                    <span aria-label="Sorteo activo ahora"
+                                        class="px-2.5 py-1 rounded-full bg-accent/20 text-[10px] font-bold tracking-[0.16em] uppercase text-primary">Activo</span>
                                 </div>
 
                                 <h2 class="mt-3 text-2xl md:text-3xl font-black tracking-tight">Porsche 911 GT3</h2>
@@ -129,27 +129,24 @@
                             class="group rounded-2xl border border-outline-variant/20 bg-background p-6 md:p-7 text-left transition-all hover:-translate-y-1 hover:border-outline-variant/40">
                             <p class="text-xs font-bold uppercase tracking-[0.18em] text-secondary" aria-hidden="true">
                                 Paso 01</p>
-                            <h3 class="mt-3 text-xl font-black">Elige tu sorteo</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-secondary">Explora sorteos activos de autos,
-                                gadgets y premios en efectivo.</p>
+                            <h3 class="mt-3 text-xl font-black">Explora la rifa</h3>
+                            <p class="mt-2 text-sm leading-relaxed text-secondary">Visita el enlace compartido por el organizador y revisa toda la información de la rifa.</p>
                         </li>
 
                         <li
                             class="group rounded-2xl border border-outline-variant/20 bg-background p-6 md:p-7 text-left transition-all hover:-translate-y-1 hover:border-outline-variant/40">
                             <p class="text-xs font-bold uppercase tracking-[0.18em] text-secondary" aria-hidden="true">
                                 Paso 02</p>
-                            <h3 class="mt-3 text-xl font-black">Compra tus números</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-secondary">Selecciona tus tickets, confirma tu
-                                respuesta y entra al sorteo.</p>
+                            <h3 class="mt-3 text-xl font-black">Elige tu número</h3>
+                            <p class="mt-2 text-sm leading-relaxed text-secondary">Selecciona tu número favorito de la lista, búscalo o deja que el sistema elija uno al azar.</p>
                         </li>
 
                         <li
                             class="group rounded-2xl border border-primary/20 bg-primary text-on-primary p-6 md:p-7 text-left transition-all hover:-translate-y-1">
                             <p class="text-xs font-bold uppercase tracking-[0.18em] text-on-primary/70"
                                 aria-hidden="true">Paso 03</p>
-                            <h3 class="mt-3 text-xl font-black">Mira el live y gana</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-on-primary/80">Sigue el sorteo verificado en
-                                tiempo real y reclama tu premio al instante.</p>
+                            <h3 class="mt-3 text-xl font-black">Participa y gana</h3>
+                            <p class="mt-2 text-sm leading-relaxed text-on-primary/80">Regístrate en tu número seleccionado y espera los resultados oficiales del organizador.</p>
                         </li>
                     </ol>
                 </div>
@@ -161,8 +158,7 @@
                         <h2 class="text-3xl md:text-4xl font-black tracking-tight">Transparencia total en cada sorteo
                         </h2>
                         <p class="mt-4 text-base md:text-lg text-secondary leading-relaxed">
-                            Cada resultado se realiza con verificación pública para que juegues con confianza, sin
-                            letras pequeñas ni procesos opacos.
+                            Todo es gestionado de forma segura por nuestro sistema y el organizador de la rifa para que juegues con total confianza.
                         </p>
 
                         <ul class="mt-7 space-y-3">
@@ -175,7 +171,7 @@
                                             d="m4.5 12.75 6 6 9-13.5" />
                                     </svg>
                                 </div>
-                                <span class="text-sm md:text-base font-medium">Sorteos transmitidos en vivo</span>
+                                <span class="text-sm md:text-base font-medium">Gestión segura por el sistema y el organizador</span>
                             </li>
                             <li
                                 class="flex items-center gap-3 rounded-xl border border-outline-variant/15 bg-surface p-3.5">
@@ -238,15 +234,16 @@
                     <div class="absolute -right-14 -top-12 w-44 h-44 rounded-full bg-primary/10 blur-2xl"></div>
 
                     <div class="relative z-10">
-                        <h2 class="text-3xl md:text-5xl font-black tracking-tight">¿Listo para tu próxima gran victoria?
+                        <h2 class="text-3xl md:text-5xl font-black tracking-tight">¿Eres organizador de sorteos?
                         </h2>
                         <p class="mt-4 text-base md:text-xl text-secondary max-w-2xl mx-auto">
-                            Crea tu cuenta hoy y recibe un 10% extra en tu primer depósito para empezar a participar.
+                            Crea tu cuenta gratuita hoy y obtén un panel profesional para gestionar y compartir tus rifas fácilmente. <br>
+                            <span class="text-sm font-bold opacity-80">(Los participantes no necesitan registrarse para jugar).</span>
                         </p>
-                        <a href="/registro" role="button" aria-label="Crear cuenta en SpinLuck y comenzar a participar"
+                        <RouterLink :to="{ name: 'register' }" role="button" aria-label="Crear cuenta de organizador en SpinLuck"
                             class="mt-8 inline-block px-8 py-3.5 md:px-10 md:py-4 bg-primary text-on-primary font-bold text-base md:text-lg rounded-xl border border-primary hover:opacity-90 transition-opacity">
-                            Comenzar ahora
-                        </a>
+                            Crear cuenta de organizador
+                        </RouterLink>
                     </div>
                 </div>
             </section>

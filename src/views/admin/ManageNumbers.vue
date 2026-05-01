@@ -35,7 +35,7 @@
             </div>
 
             <div v-if="tickets.length > 0"
-                class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3 md:gap-4">
+                class="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3 md:gap-4 max-h-[60vh] overflow-y-auto pr-2">
                 <button type="button" v-for="ticket in tickets" :key="ticket.id" @click="getTicket(ticket.id)"
                     :class="['aspect-square border border-outline-variant/20 hover:border-primary rounded-xl flex items-center justify-center text-sm font-bold transition-all cursor-pointer shadow-sm', getTicketColor(ticket.ticketStatusId, ticket.winner), ticketFormState.id === ticket.id ? 'ring-2 ring-primary' : '']">
                     {{ ticket.number }}
@@ -85,7 +85,7 @@
                     <label class="text-[11px] font-bold uppercase tracking-widest text-primary">
                         Estado del Número
                     </label>
-                    <div class="flex flex-wrap gap-2">
+                    <div class="grid mdl:grid-cols-3 grid-cols-2 gap-2">
                         <button v-for="status in ticketStatus" :key="status.id" type="button"
                             @click="ticketFormState.ticketStatusId = status.id" :class="[
                                 ticketFormState.ticketStatusId === status.id ? 'bg-primary text-on-primary' : 'bg-surface-variant/30 text-primary',

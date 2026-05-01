@@ -83,7 +83,7 @@
                                     <p class="text-[10px] text-secondary font-bold uppercase tracking-widest mt-1">
                                         Bolsa actual
                                     </p>
-                                    <div class="grid grid-cols-1 sm:flex sm:flex-row gap-2 w-full">
+                                    <div class="grid grid-cols-2 sm:flex sm:flex-row gap-2 w-full">
                                         <button
                                             @click="$router.push({ name: 'dashboard-manage-numbers', params: { id: raffle.id } })"
                                             class="px-3.5 py-2 rounded-lg border border-primary bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity w-full sm:w-auto">

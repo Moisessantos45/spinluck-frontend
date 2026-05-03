@@ -8,6 +8,26 @@
                 <span class="text-[11px] font-bold tracking-widest text-secondary uppercase mb-6 block">Datos del
                     Participante</span>
                 <div class="flex flex-col gap-5">
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" value="random" v-model="selectionMode"
+                                class="w-4 h-4 text-primary focus:ring-primary border-outline-variant/30" />
+                            <span class="text-sm font-bold text-primary">Número aleatorio</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" value="specific" v-model="selectionMode"
+                                class="w-4 h-4 text-primary focus:ring-primary border-outline-variant/30" />
+                            <span class="text-sm font-bold text-primary">Buscar número</span>
+                        </label>
+                    </div>
+
+                    <div v-if="selectionMode === 'specific'" class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-bold tracking-widest text-secondary uppercase">Número
+                            deseado</label>
+                        <input v-model="specificTicketNumber" type="text" placeholder="Ej. 123"
+                            class="w-full bg-background border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-primary font-medium placeholder:text-secondary/50 focus:outline-none focus:border-primary/60 transition-colors" />
+                    </div>
+
                     <div class="flex flex-col gap-1.5">
                         <label class="text-[10px] font-bold tracking-widest text-secondary uppercase">Nombre
                             completo</label>
@@ -84,13 +104,15 @@
                     <span class="text-[11px] font-bold tracking-widest text-secondary uppercase">Tu Número de
                         Boleto</span>
                     <div class="text-7xl md:text-[8rem] font-black tracking-tighter leading-none text-primary">
-                        {{ ticketWithOrganizerNumber.number }}
+                        {{ ticketWithOrganizerNumber.formattedNumber }}
                     </div>
                     <div class="grid grid-cols-2 gap-3 w-full max-w-xs text-left">
                         <div class="p-3 bg-background rounded-xl border border-outline-variant/20">
                             <span
                                 class="block text-[9px] font-bold tracking-widest text-secondary uppercase mb-1">Nombre</span>
-                            <span class="text-sm font-bold text-primary truncate block">{{ participantName }}</span>
+                            <span class="text-sm font-bold text-primary truncate block">
+                                {{ participantName }}
+                            </span>
                         </div>
                         <div class="p-3 bg-background rounded-xl border border-outline-variant/20">
                             <span
@@ -157,6 +179,8 @@ type Phase = 'form' | 'loading' | 'success';
 const phase = ref<Phase>('form');
 const participantName = ref('');
 const participantPhone = ref('');
+const selectionMode = ref<'random' | 'specific'>('random');
+const specificTicketNumber = ref('');
 
 const raffleId = Number(route.query.raffleId);
 
@@ -169,13 +193,27 @@ const submitForm = async () => {
         toast.warning('Por favor ingresa un teléfono válido de 10 dígitos.');
         return;
     }
+    if (selectionMode.value === 'specific' && !specificTicketNumber.value.trim()) {
+        toast.warning('Por favor ingresa el número que deseas buscar.');
+        return;
+    }
+
     phase.value = 'loading';
-    await ticketStore.getRandomAvailableTicket(raffleId);
-    if (ticketWithOrganizerNumber.value.id === -1) {
-        toast.error('No se encontró ningún boleto disponible para esta rifa.');
+    let result;
+
+    if (selectionMode.value === 'random') {
+        result = await ticketStore.getRandomAvailableTicket(raffleId);
+    } else {
+        ticketStore.clearDataForm();
+        result = await ticketStore.searchTicketByNumber(raffleId, specificTicketNumber.value);
+    }
+
+    if (!result.isSuccess) {
+        toast.error('Ocurrió un error al obtener tu boleto. Por favor intenta de nuevo.');
         phase.value = 'form';
         return;
     }
+
     phase.value = 'success';
 };
 
@@ -199,16 +237,15 @@ const sendWhatsApp = () => {
 
     const mensaje = `¡Hola! Me gustaría participar en el sorteo SpinLuck.
 
-    Número de boleto: ${ticketWithOrganizerNumber.value.number}
-    ID del boleto: ${ticketWithOrganizerNumber.value.id}
+    Número de boleto: ${ticketWithOrganizerNumber.value.formattedNumber}
     Nombre: ${participantName.value}
     Teléfono: ${participant}
 
     Por favor confirmen mi participación. ¡Gracias!`;
 
-        const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-        window.open(url, '_blank');
-    };
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+};
 
 onMounted(() => {
     if (!raffleId || isNaN(raffleId)) {

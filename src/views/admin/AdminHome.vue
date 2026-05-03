@@ -206,14 +206,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import useOrganizerStore from '@/store/organizer';
 import useRaffleStore from '@/store/raffle';
+import useAuthStore from '@/store/auth';
 
+const authStore = useAuthStore();
 const organizerStore = useOrganizerStore();
 const raffleStore = useRaffleStore();
 
+const { authenticated } = storeToRefs(authStore);
 const { dataDashboardMetrics } = storeToRefs(organizerStore);
 const { rafflesGenericsRecent, loading } = storeToRefs(raffleStore);
 
@@ -222,13 +225,17 @@ const formatPercent = (value: number) => `${value.toFixed(1)}%`;
 const formatDays = (value: number) => `${value.toFixed(1)} días`;
 
 const getData = async () => {
-    await Promise.all([
-        organizerStore.getOrganizerDashboardMetrics(),
-        raffleStore.getRafflesGenericsRecent()
-    ]);
+    await organizerStore.getOrganizerDashboardMetrics();
+    await raffleStore.getRafflesGenericsRecent();
 };
 
-onMounted(() => {
-    getData();
-});
+watch(
+    authenticated,
+    (isAuthenticated) => {
+        if (isAuthenticated) {
+            getData();
+        }
+    },
+    { immediate: true },
+);
 </script>

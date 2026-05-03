@@ -24,8 +24,8 @@ let failedQueue: { resolve: (value: unknown) => void; reject: (reason?: any) => 
 
 const shouldSkipAuthHeader = (url?: string) => {
   if (!url) return false;
-  return ["/auth/login", "/auth/2fa/verify"].some((path) =>
-    url.includes(path),
+  return ["/auth/login", "/auth/2fa/verify", "/auth/refresh-token"].some(
+    (path) => url.includes(path),
   );
 };
 

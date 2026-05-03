@@ -21,6 +21,8 @@ const useAuthStore = defineStore("auth", () => {
   const email = ref("");
   const password = ref("");
   const token = ref("");
+  const suppressAutoRefresh = ref(false);
+  let sessionRequest: Promise<void> | null = null;
 
   const setAuthenticated = (value: boolean) => {
     authenticated.value = value;
@@ -41,6 +43,7 @@ const useAuthStore = defineStore("auth", () => {
   const setToken = (newToken: string) => {
     token.value = newToken;
     authData.value.token = newToken;
+    suppressAutoRefresh.value = false;
   };
 
   const getHeaders = () => ({
@@ -80,7 +83,6 @@ const useAuthStore = defineStore("auth", () => {
         onSuccess: (mappedData) => {
           authData.value.token = mappedData;
           token.value = mappedData;
-          authenticated.value = true;
           refreshedToken = mappedData;
         },
         onError: (_) => {
@@ -97,20 +99,43 @@ const useAuthStore = defineStore("auth", () => {
   };
 
   const getSession = async () => {
-    await exec(() => apiAuth.get("/auth/session"), {
-      mapper: (res) => {
-        const extractedData = res.data.data ?? null;
-        return extractedData ? authMapper(extractedData) : null;
-      },
-      onSuccess: (mappedData) => {
-        if (mappedData) {
-          authData.value = mappedData;
-          authenticated.value = true;
-        } else {
-          authenticated.value = false;
+    if (sessionRequest) return sessionRequest;
+
+    sessionRequest = (async () => {
+      if (suppressAutoRefresh.value && !getToken()) {
+        return;
+      }
+
+      if (!getToken()) {
+        try {
+          await getRefreshToken();
+        } catch {
+          clearAuthData();
+          return;
         }
-      },
-    });
+      }
+
+      await exec(() => apiAuth.get("/auth/session"), {
+        mapper: (res) => {
+          const extractedData = res.data.data ?? null;
+          return extractedData ? authMapper(extractedData) : null;
+        },
+        onSuccess: (mappedData) => {
+          if (mappedData) {
+            authData.value = mappedData;
+            authenticated.value = true;
+          } else {
+            authenticated.value = false;
+          }
+        },
+      });
+    })();
+
+    try {
+      await sessionRequest;
+    } finally {
+      sessionRequest = null;
+    }
   };
 
   const register = async (email: string, password: string) => {
@@ -249,6 +274,7 @@ const useAuthStore = defineStore("auth", () => {
 
         setToken(mappedData.token);
         authenticated.value = true;
+        suppressAutoRefresh.value = false;
         requiresTwoFactor.value = false;
         alertMessage.value = {
           error: false,
@@ -287,6 +313,7 @@ const useAuthStore = defineStore("auth", () => {
       onSuccess: (accessToken) => {
         setToken(accessToken);
         authenticated.value = true;
+        suppressAutoRefresh.value = false;
         requiresTwoFactor.value = false;
         alertMessage.value = {
           error: false,
@@ -322,6 +349,7 @@ const useAuthStore = defineStore("auth", () => {
       {
         mapper: () => "Logout exitoso.",
         onSuccess: (_) => {
+          suppressAutoRefresh.value = true;
           clearAuthData();
         },
         onError: (_) => {

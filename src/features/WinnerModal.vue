@@ -44,10 +44,15 @@
                 <div v-else class="w-full">
                     <div
                         class="bg-background border border-outline-variant/20 rounded-2xl p-6 mb-6 flex flex-col items-center gap-2 shadow-sm">
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-secondary">Número
-                            Ganador</span>
-                        <span class="text-6xl font-black tracking-tight text-primary">{{ winnerTicket.number }}</span>
-                        <span class="text-sm font-semibold text-secondary">{{ winnerTicket.participantName }}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                            Número Ganador
+                        </span>
+                        <span class="text-6xl font-black tracking-tight text-primary">
+                            {{ winnerTicket.formattedNumber }}
+                        </span>
+                        <span class="text-sm font-semibold text-secondary">
+                            {{ winnerTicket.participantName }}
+                        </span>
                         <span class="text-xs text-secondary">{{ winnerTicket.participantPhone }}</span>
                     </div>
                     <div class="flex gap-4 w-full">

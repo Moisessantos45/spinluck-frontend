@@ -21,6 +21,11 @@ const useRaffleStore = defineStore("raffle", () => {
   const rafflesGenerics = reactive<RaffleInfoGeneric[]>([]);
   const rafflesGenericsRecent = reactive<RaffleInfoGeneric[]>([]);
   const dataForm = reactive<Raffle>({ ...initialRaffle });
+  let rafflesRecentRequest: Promise<void> | null = null;
+  let rafflesRequest: Promise<void> | null = null;
+  let lastRecentFetch = 0;
+  let lastRafflesFetch = 0;
+  const MIN_FETCH_INTERVAL_MS = 1000;
 
   const clearDataForm = () => {
     Object.assign(dataForm, initialRaffle);
@@ -40,29 +45,57 @@ const useRaffleStore = defineStore("raffle", () => {
   };
 
   const getRafflesGenericsRecent = async () => {
-    await exec(() => apiAuth.get("/raffle/organizer/recent"), {
-      mapper(res) {
-        const extractedData = res.data.data ?? [];
-        return extractedData.map(mapperRaffleGeneric);
-      },
-      onSuccess: (data) => {
-        rafflesGenericsRecent.splice(0, rafflesGenericsRecent.length, ...data);
-      },
-      onError: (_) => {},
-    });
+    if (Date.now() - lastRecentFetch < MIN_FETCH_INTERVAL_MS) return;
+    if (rafflesRecentRequest) return rafflesRecentRequest;
+    lastRecentFetch = Date.now();
+
+    rafflesRecentRequest = (async () => {
+      await exec(() => apiAuth.get("/raffle/organizer/recent"), {
+        mapper(res) {
+          const extractedData = res.data.data ?? [];
+          return extractedData.map(mapperRaffleGeneric);
+        },
+        onSuccess: (data) => {
+          rafflesGenericsRecent.splice(
+            0,
+            rafflesGenericsRecent.length,
+            ...data,
+          );
+        },
+        onError: (_) => {},
+      });
+    })();
+
+    try {
+      await rafflesRecentRequest;
+    } finally {
+      rafflesRecentRequest = null;
+    }
   };
 
   const getRafflesGenerics = async () => {
-    await exec(() => apiAuth.get("/raffle/organizer"), {
-      mapper(res) {
-        const extractedData = res.data.data ?? [];
-        return extractedData.map(mapperRaffleGeneric);
-      },
-      onSuccess: (data) => {
-        rafflesGenerics.splice(0, rafflesGenerics.length, ...data);
-      },
-      onError: (_) => {},
-    });
+    if (Date.now() - lastRafflesFetch < MIN_FETCH_INTERVAL_MS) return;
+    if (rafflesRequest) return rafflesRequest;
+    lastRafflesFetch = Date.now();
+
+    rafflesRequest = (async () => {
+      await exec(() => apiAuth.get("/raffle/organizer"), {
+        mapper(res) {
+          const extractedData = res.data.data ?? [];
+          return extractedData.map(mapperRaffleGeneric);
+        },
+        onSuccess: (data) => {
+          rafflesGenerics.splice(0, rafflesGenerics.length, ...data);
+        },
+        onError: (_) => {},
+      });
+    })();
+
+    try {
+      await rafflesRequest;
+    } finally {
+      rafflesRequest = null;
+    }
   };
 
   const getRaffle = async (id: number) => {

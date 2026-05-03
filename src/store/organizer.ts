@@ -21,41 +21,70 @@ const useOrganizerStore = defineStore("organizer", () => {
   const dataDashboardMetrics = reactive({
     ...initialOrganizerDashboardMetrics,
   });
+  let organizerRequest: Promise<void> | null = null;
+  let dashboardMetricsRequest: Promise<void> | null = null;
+  let lastOrganizerFetch = 0;
+  let lastDashboardMetricsFetch = 0;
+  const MIN_FETCH_INTERVAL_MS = 1000;
 
   const getOrganizerDashboardMetrics = async () => {
-    await exec(() => apiAuth.get("/organizer/dashboard-metrics"), {
-      mapper(res) {
-        const extractedData = res.data.data ?? null;
-        if (!extractedData) {
-          throw new Error(
-            "Error al obtener las métricas del dashboard del organizador. Por favor, intenta de nuevo.",
-          );
-        }
-        return mapperOrganizerDashboardMetrics(extractedData);
-      },
-      onSuccess: (data) => {
-        Object.assign(dataDashboardMetrics, data);
-      },
-      onError: (_) => {},
-    });
+    if (Date.now() - lastDashboardMetricsFetch < MIN_FETCH_INTERVAL_MS) return;
+    if (dashboardMetricsRequest) return dashboardMetricsRequest;
+    lastDashboardMetricsFetch = Date.now();
+
+    dashboardMetricsRequest = (async () => {
+      await exec(() => apiAuth.get("/organizer/dashboard-metrics"), {
+        mapper(res) {
+          const extractedData = res.data.data ?? null;
+          if (!extractedData) {
+            throw new Error(
+              "Error al obtener las métricas del dashboard del organizador. Por favor, intenta de nuevo.",
+            );
+          }
+          return mapperOrganizerDashboardMetrics(extractedData);
+        },
+        onSuccess: (data) => {
+          Object.assign(dataDashboardMetrics, data);
+        },
+        onError: (_) => {},
+      });
+    })();
+
+    try {
+      await dashboardMetricsRequest;
+    } finally {
+      dashboardMetricsRequest = null;
+    }
   };
 
   const getOrganizer = async () => {
-    await exec(() => apiAuth.get("/organizer"), {
-      mapper(res) {
-        const extractedData = res.data.data ?? null;
-        if (!extractedData) {
-          throw new Error(
-            "Error al obtener el organizador. Por favor, intenta de nuevo.",
-          );
-        }
-        return mapperOrganizer(extractedData);
-      },
-      onSuccess: (data) => {
-        Object.assign(dataForm, data);
-      },
-      onError: (_) => {},
-    });
+    if (Date.now() - lastOrganizerFetch < MIN_FETCH_INTERVAL_MS) return;
+    if (organizerRequest) return organizerRequest;
+    lastOrganizerFetch = Date.now();
+
+    organizerRequest = (async () => {
+      await exec(() => apiAuth.get("/organizer"), {
+        mapper(res) {
+          const extractedData = res.data.data ?? null;
+          if (!extractedData) {
+            throw new Error(
+              "Error al obtener el organizador. Por favor, intenta de nuevo.",
+            );
+          }
+          return mapperOrganizer(extractedData);
+        },
+        onSuccess: (data) => {
+          Object.assign(dataForm, data);
+        },
+        onError: (_) => {},
+      });
+    })();
+
+    try {
+      await organizerRequest;
+    } finally {
+      organizerRequest = null;
+    }
   };
 
   const addOrganizer = async () => {

@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import LayoutAuth from '@/components/templates/LayoutAuth.vue';
@@ -36,9 +36,9 @@ const { authData, authenticated, loading, alertMessage } = storeToRefs(authStore
 const sidebarOpen = ref(false);
 
 const getData = async () => {
-    await Promise.allSettled([
-        authStore.getSession(),
-    ])
+    if (!authenticated.value) {
+        await authStore.getSession();
+    }
 
     if (authData.value.fullProfile) {
         await organizerStore.getOrganizer();
@@ -52,9 +52,13 @@ const logout = async () => {
     }
 };
 
-onMounted(() => {
-    if (authenticated.value) {
-        getData();
-    }
-});
+watch(
+    authenticated,
+    (isAuthenticated) => {
+        if (isAuthenticated) {
+            getData();
+        }
+    },
+    { immediate: true },
+);
 </script>

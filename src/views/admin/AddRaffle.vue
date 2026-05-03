@@ -98,6 +98,7 @@
 
                     <div class="flex items-center justify-between pt-1">
                         <button
+                            @click="clearData" type="button"
                             class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-secondary hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="w-4 h-4">
@@ -361,6 +362,18 @@ const handleDeletePrize = async (id: number) => {
     } else {
         setToast(alertPrize.value?.msg || "Error al eliminar el premio", true);
     }
+};
+
+const clearData = () => {
+    raffleStore.clearDataForm();
+    prizeStore.clearDataFormPrize();
+
+    router.push({
+        query: {
+            ...route.query,
+            raffle: undefined
+        }
+    });
 };
 
 onMounted(() => {

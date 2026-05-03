@@ -33,17 +33,26 @@ const useTicketStore = defineStore("ticket", () => {
     Object.assign(ticketFormState, initialTicket);
   };
 
+  let stateTicketsRequest: Promise<void> | null = null;
   const getStateTickets = async () => {
-    await exec(() => apiAuth.get("/ticket/status"), {
-      mapper(res) {
-        const extractedData = res.data.data ?? [];
-        return extractedData.map(mapperStateGeneric);
-      },
-      onSuccess: (data) => {
-        ticketStatus.splice(0, ticketStatus.length, ...data);
-      },
-      onError: (_) => {},
-    });
+    if (stateTicketsRequest) return stateTicketsRequest;
+    stateTicketsRequest = (async () => {
+      await exec(() => apiAuth.get("/ticket/status"), {
+        mapper(res) {
+          const extractedData = res.data.data ?? [];
+          return extractedData.map(mapperStateGeneric);
+        },
+        onSuccess: (data) => {
+          ticketStatus.splice(0, ticketStatus.length, ...data);
+        },
+        onError: (_) => {},
+      });
+    })();
+    try {
+      await stateTicketsRequest;
+    } finally {
+      stateTicketsRequest = null;
+    }
   };
 
   const getTickets = async (raffleId: number) => {
@@ -82,20 +91,23 @@ const useTicketStore = defineStore("ticket", () => {
   };
 
   const getRandomAvailableTicket = async (raffleId: number) => {
-    await exec(() => apiAuth.get(`/ticket/raffle/${raffleId}/available`), {
-      mapper(res) {
-        const extractedData = res.data.data ?? null;
-        if (!extractedData) {
-          throw new Error("Error al obtener el ticket disponible aleatorio.");
-        }
+    return await exec(
+      () => apiAuth.get(`/ticket/raffle/${raffleId}/available`),
+      {
+        mapper(res) {
+          const extractedData = res.data.data ?? null;
+          if (!extractedData) {
+            throw new Error("Error al obtener el ticket disponible aleatorio.");
+          }
 
-        return mapperTicketWithOrganizerNumber(extractedData);
+          return mapperTicketWithOrganizerNumber(extractedData);
+        },
+        onSuccess: (data) => {
+          Object.assign(ticketWithOrganizerNumber, data);
+        },
+        onError: (_) => {},
       },
-      onSuccess: (data) => {
-        Object.assign(ticketWithOrganizerNumber, data);
-      },
-      onError: (_) => {},
-    });
+    );
   };
 
   const getGeneratedVoucher = async (id: number) => {
@@ -113,9 +125,6 @@ const useTicketStore = defineStore("ticket", () => {
 
           const imageUrl = URL.createObjectURL(blob);
           return imageUrl;
-        },
-        onSuccess: (imageUrl) => {
-          window.open(imageUrl, "_blank");
         },
         onError: (_) => {},
       },
@@ -139,6 +148,30 @@ const useTicketStore = defineStore("ticket", () => {
       },
       onError: (_) => {},
     });
+  };
+
+  const searchTicketByNumber = async (raffleId: number, number: string) => {
+    return await exec(
+      () =>
+        apiAuth.get(`/ticket/raffle/${raffleId}/search`, {
+          params: { number },
+        }),
+      {
+        mapper(res) {
+          const extractedData = res.data.data ?? null;
+          if (!extractedData) {
+            throw new Error("Error al buscar el ticket por número.");
+          }
+          return mapperTicketWithOrganizerNumber(extractedData);
+        },
+        onSuccess: (data) => {
+          Object.assign(ticketWithOrganizerNumber, {
+            ...data,
+          });
+        },
+        onError: (_) => {},
+      },
+    );
   };
 
   const addTicket = async () => {
@@ -221,6 +254,7 @@ const useTicketStore = defineStore("ticket", () => {
     getGeneratedVoucher,
     getTickets,
     getTicket,
+    searchTicketByNumber,
     addTicket,
     updateTicket,
     updateTicketToWinner,

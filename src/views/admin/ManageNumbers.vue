@@ -38,7 +38,7 @@
                 class="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3 md:gap-4 max-h-[60vh] overflow-y-auto pr-2">
                 <button type="button" v-for="ticket in tickets" :key="ticket.id" @click="getTicket(ticket.id)"
                     :class="['aspect-square border border-outline-variant/20 hover:border-primary rounded-xl flex items-center justify-center text-sm font-bold transition-all cursor-pointer shadow-sm', getTicketColor(ticket.ticketStatusId, ticket.winner), ticketFormState.id === ticket.id ? 'ring-2 ring-primary' : '']">
-                    {{ ticket.number }}
+                    {{ ticket.formattedNumber }}
                 </button>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     <div
                         class="px-4 py-3 bg-surface-variant/30 border border-outline-variant/20 rounded-xl flex items-center justify-between">
                         <span class="font-black text-xl tracking-tight text-primary">
-                            {{ ticketFormState.number || '---' }}
+                            {{ ticketFormState.formattedNumber || '---' }}
                         </span>
                         <span
                             class="text-[10px] font-bold uppercase tracking-widest text-primary bg-background border border-outline-variant/20 px-3 py-1.5 rounded-lg shadow-sm">
@@ -190,6 +190,19 @@ const handleClickVoucher = async () => {
     try {
         const result = await ticketStore.getGeneratedVoucher(ticketFormState.value.id);
         if (result.isSuccess) {
+            const imageUrl = result.match({
+                success: (url) => url,
+                error: () => "",
+            });
+
+            const link = document.createElement("a");
+            link.href = imageUrl;
+            link.download = `voucher-${ticketFormState.value.number || ticketFormState.value.id}.png`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            setTimeout(() => URL.revokeObjectURL(imageUrl), 60000);
             toast.success("¡Voucher generado exitosamente!");
         } else {
             toast.error(alertMessage.value?.msg || "Error al generar el voucher. Por favor, intenta nuevamente.");

@@ -117,11 +117,15 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
+import useAuthStore from '@/store/auth';
 import useRaffleStore from '@/store/raffle';
 
+const authStore = useAuthStore();
 const raffleStore = useRaffleStore();
+const { authenticated } = storeToRefs(authStore);
 const { rafflesGenerics, loading } = storeToRefs(raffleStore);
 const router = useRouter();
 
@@ -145,7 +149,13 @@ const openPublicRaffle = (slug: string) => {
 };
 
 
-onMounted(() => {
-    raffleStore.getRafflesGenerics();
-});
+watch(
+    authenticated,
+    (isAuthenticated) => {
+        if (isAuthenticated) {
+            raffleStore.getRafflesGenerics();
+        }
+    },
+    { immediate: true },
+);
 </script>

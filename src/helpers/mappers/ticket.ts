@@ -12,6 +12,8 @@ const mapperTicket = (data: Record<string, unknown>): Ticket => {
     raffleId: getNumber(data.raffle_id),
     ticketStatusId: getNumber(data.status_id ?? data.ticket_status_id),
     winner: data.winner?.toString().toLowerCase() === "true",
+    formattedNumber: getString(data.formatted_number, ""),
+    slug: getString(data.slug, ""),
     createdAt: new Date(getString(data.created_at, new Date().toISOString())),
     updatedAt: new Date(getString(data.updated_at, new Date().toISOString())),
 
@@ -29,6 +31,7 @@ const mapperTicketWithOrganizerNumber = (
   return {
     id: getNumber(data.id),
     number: getNumber(data.number),
+    formattedNumber: getString(data.formatted_number, ""),
     slug: getString(data.slug),
     organizerNumber: getString(data.organizer_number, "-1"),
   };

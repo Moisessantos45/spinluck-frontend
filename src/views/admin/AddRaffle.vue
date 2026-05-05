@@ -97,8 +97,7 @@
                     </div>
 
                     <div class="flex items-center justify-between pt-1">
-                        <button
-                            @click="clearData" type="button"
+                        <button @click="clearData" type="button"
                             class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-secondary hover:text-primary transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="w-4 h-4">
@@ -257,7 +256,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, onBeforeUnmount } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from "vue-toastification"
@@ -328,7 +327,6 @@ const handleClickSaveRaffle = async () => {
         result = await raffleStore.addRaffle();
         if (result.isSuccess) {
             toast.success("Sorteo creado correctamente");
-            raffleStore.clearDataForm();
             router.push({
                 query: {
                     ...route.query,
@@ -376,9 +374,7 @@ const clearData = () => {
     });
 };
 
-onMounted(() => {
-    raffleStore.getStateRaffles();
-
+const getData = () => {
     const raffleIdStr = route.query.raffle;
     if (raffleIdStr && typeof raffleIdStr === 'string') {
         const raffleId = parseInt(raffleIdStr, 10);
@@ -387,5 +383,15 @@ onMounted(() => {
             prizeStore.getPrizes(raffleId);
         }
     }
+}
+
+onMounted(() => {
+    raffleStore.getStateRaffles();
+    getData();
+});
+
+onBeforeUnmount(() => {
+    raffleStore.clearDataForm();
+    prizeStore.clearDataFormPrize();
 });
 </script>

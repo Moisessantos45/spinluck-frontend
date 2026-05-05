@@ -1,4 +1,8 @@
-import type { Ticket, TicketWithOrganizerNumber } from "@/entities/ticket";
+import type {
+  Ticket,
+  TicketPublicData,
+  TicketWithOrganizerNumber,
+} from "@/entities/ticket";
 import { getNumber, getString } from "./formatters";
 import { mapperStateGeneric } from "./state";
 import { initialStatusGeneric } from "@/entities/state";
@@ -37,6 +41,17 @@ const mapperTicketWithOrganizerNumber = (
   };
 };
 
+const mapperTicketPublicData = (
+  data: Record<string, unknown>,
+): TicketPublicData => {
+  return {
+    id: getNumber(data.id),
+    number: getNumber(data.number),
+    formattedNumber: getString(data.formatted_number, ""),
+    ticketStatusID: getNumber(data.status_id ?? data.ticket_status_id),
+  };
+};
+
 const ticketToJson = (ticket: Partial<Ticket>) => ({
   number: ticket.number,
   participant_name: ticket.participantName,
@@ -45,4 +60,9 @@ const ticketToJson = (ticket: Partial<Ticket>) => ({
   ticket_status_id: ticket.ticketStatusId,
 });
 
-export { mapperTicket, mapperTicketWithOrganizerNumber, ticketToJson };
+export {
+  mapperTicket,
+  mapperTicketWithOrganizerNumber,
+  ticketToJson,
+  mapperTicketPublicData,
+};

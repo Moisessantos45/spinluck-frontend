@@ -25,6 +25,13 @@ interface TicketWithOrganizerNumber {
   organizerNumber: string;
 }
 
+interface TicketPublicData {
+  id: number;
+  number: number;
+  formattedNumber: string;
+  ticketStatusID: number;
+}
+
 const initialTicket: Ticket = {
   id: -1,
   number: -1,
@@ -51,6 +58,7 @@ const initialTicketWithOrganizerNumber: TicketWithOrganizerNumber = {
 export {
   type Ticket,
   type TicketWithOrganizerNumber,
+  type TicketPublicData,
   initialTicket,
   initialTicketWithOrganizerNumber,
 };

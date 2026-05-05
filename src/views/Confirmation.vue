@@ -9,43 +9,57 @@
                     Participante</span>
                 <div class="flex flex-col gap-5">
                     <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value="random" v-model="selectionMode"
-                                class="w-4 h-4 text-primary focus:ring-primary border-outline-variant/30" />
-                            <span class="text-sm font-bold text-primary">Número aleatorio</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value="specific" v-model="selectionMode"
-                                class="w-4 h-4 text-primary focus:ring-primary border-outline-variant/30" />
-                            <span class="text-sm font-bold text-primary">Buscar número</span>
-                        </label>
+                        <InputField label="Numero aleatorio" id="price" required type="radio" inputmode="numeric"
+                            v-model="selectionMode" placeholder="" value="random" />
+                        <InputField label="Elegir un numero" id="price" required type="radio" inputmode="numeric"
+                            v-model="selectionMode" placeholder="" value="specific" />
                     </div>
 
                     <div v-if="selectionMode === 'specific'" class="flex flex-col gap-1.5">
-                        <label class="text-[10px] font-bold tracking-widest text-secondary uppercase">Número
-                            deseado</label>
-                        <input v-model="specificTicketNumber" type="text" placeholder="Ej. 123"
-                            class="w-full bg-background border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-primary font-medium placeholder:text-secondary/50 focus:outline-none focus:border-primary/60 transition-colors" />
-                    </div>
+                        <div class="flex flex-wrap gap-2 text-[10px] font-bold tracking-widest uppercase mb-2 mt-2">
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 rounded-sm border border-outline-variant/20 bg-primary text-on-primary"></div>
+                                <span class="text-secondary">Vendido</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 rounded-sm border border-outline-variant/20 bg-green-500 text-white"></div>
+                                <span class="text-secondary">Disponible</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 rounded-sm border border-outline-variant/20 bg-yellow-500 text-white"></div>
+                                <span class="text-secondary">Reservado</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 rounded-sm border border-outline-variant/20 bg-red-500 text-white"></div>
+                                <span class="text-secondary">Anulado</span>
+                            </div>
+                        </div>
 
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[10px] font-bold tracking-widest text-secondary uppercase">Nombre
-                            completo</label>
-                        <input v-model="participantName" type="text" placeholder="Ej. Juan Pérez"
-                            class="w-full bg-background border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-primary font-medium placeholder:text-secondary/50 focus:outline-none focus:border-primary/60 transition-colors" />
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[10px] font-bold tracking-widest text-secondary uppercase">Teléfono</label>
-                        <div
-                            class="flex items-center bg-background border border-outline-variant/30 rounded-xl overflow-hidden focus-within:border-primary/60 transition-colors">
-                            <span
-                                class="px-3 py-3 text-sm font-bold text-secondary border-r border-outline-variant/20">+52</span>
-                            <input v-model="participantPhone" type="tel" placeholder="4811234567"
-                                class="flex-1 bg-transparent px-4 py-3 text-sm text-primary font-medium placeholder:text-secondary/50 focus:outline-none" />
+                        <div v-if="ticketsPublicData.length > 0" class="grid grid-cols-5 md:grid-cols-6 gap-2 max-h-48 overflow-y-auto pr-1">
+                            <button type="button" v-for="ticket in ticketsPublicData" :key="ticket.id" 
+                                @click="ticket.ticketStatusID === 2 ? specificTicketNumber = ticket.number.toString() : null"
+                                :disabled="ticket.ticketStatusID !== 2"
+                                :class="['aspect-square border border-outline-variant/20 hover:border-primary rounded-xl flex items-center justify-center text-sm font-bold transition-all shadow-sm', 
+                                    ticket.ticketStatusID === 1 ? 'bg-primary text-on-primary opacity-70' : 
+                                    ticket.ticketStatusID === 2 ? 'bg-green-500 text-white cursor-pointer' : 
+                                    ticket.ticketStatusID === 3 ? 'bg-yellow-500 text-white opacity-70' : 
+                                    'bg-red-500 text-white opacity-70',
+                                    specificTicketNumber === ticket.number.toString() && ticket.ticketStatusID === 2 ? 'ring-4 ring-primary scale-95 z-10' : '']">
+                                {{ ticket.formattedNumber }}
+                            </button>
                         </div>
                     </div>
 
-                    <button @click="submitForm"
+                    <div class="flex flex-col gap-1.5">
+                        <InputField label="Nombre completo" id="participantName" required type="text"
+                            v-model="participantName" placeholder="Ej. Juan Pérez" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <InputField label="Teléfono" id="participantPhone" required type="tel"
+                            v-model="participantPhone" placeholder="Ej. 4811234567" />
+                    </div>
+
+                    <button @click="submitForm" type="button"
                         class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold tracking-[0.05em] text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-md mt-2">
                         Obtener mi boleto
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -83,8 +97,6 @@
                 <span class="w-2 h-2 rounded-full bg-primary animate-bounce" style="animation-delay:300ms"></span>
             </div>
         </div>
-
-
 
         <div v-if="phase === 'success'" class="w-full max-w-2xl flex flex-col items-center gap-8">
             <div
@@ -133,7 +145,7 @@
             </div>
 
             <div class="w-full max-w-md flex flex-col gap-4">
-                <button id="alertButton" @click="sendWhatsApp"
+                <button id="alertButton" @click="sendWhatsApp" type="button"
                     class="w-full bg-[#25D366] text-white py-4 px-8 rounded-xl font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-3 shadow-sm hover:opacity-90 transition-all active:scale-95">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                         <path
@@ -168,12 +180,13 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
+import InputField from '@/components/molecules/InputField.vue';
 import useTicketStore from '@/store/ticket';
 
 const route = useRoute();
 const toast = useToast();
 const ticketStore = useTicketStore();
-const { ticketWithOrganizerNumber } = storeToRefs(ticketStore);
+const { ticketWithOrganizerNumber, ticketsPublicData } = storeToRefs(ticketStore);
 
 type Phase = 'form' | 'loading' | 'success';
 const phase = ref<Phase>('form');
@@ -247,9 +260,11 @@ const sendWhatsApp = () => {
     window.open(url, '_blank');
 };
 
-onMounted(() => {
+onMounted(async () => {
     if (!raffleId || isNaN(raffleId)) {
         toast.error('No se encontró el ID de la rifa. Regresa e intenta de nuevo.');
+    } else {
+        await ticketStore.getTicketsPublicData(raffleId);
     }
 });
 </script>

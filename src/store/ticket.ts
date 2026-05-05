@@ -5,11 +5,13 @@ import {
   initialTicket,
   initialTicketWithOrganizerNumber,
   type Ticket,
+  type TicketPublicData,
   type TicketWithOrganizerNumber,
 } from "@/entities/ticket";
 import { apiAuth } from "@/services/api";
 import {
   mapperTicket,
+  mapperTicketPublicData,
   mapperTicketWithOrganizerNumber,
   ticketToJson,
 } from "@/helpers/mappers/ticket";
@@ -21,6 +23,7 @@ const useTicketStore = defineStore("ticket", () => {
   const ticketFormState = reactive<Ticket>({ ...initialTicket });
   const ticketStatus = reactive<StatusGeneric[]>([]);
   const tickets = reactive<Ticket[]>([]);
+  const ticketsPublicData = reactive<TicketPublicData[]>([]);
   const ticketWithOrganizerNumber = reactive<TicketWithOrganizerNumber>({
     ...initialTicketWithOrganizerNumber,
   });
@@ -66,6 +69,24 @@ const useTicketStore = defineStore("ticket", () => {
       },
       onSuccess: (data) => {
         tickets.splice(0, tickets.length, ...data);
+      },
+      onError: (_) => {},
+    });
+  };
+
+  const getTicketsPublicData = async (raffleId: number) => {
+    await exec(() => apiAuth.get(`/ticket/raffle/${raffleId}/public`), {
+      mapper(res) {
+        const extractedData = res.data.data ?? [];
+        if (!Array.isArray(extractedData)) {
+          throw new Error(
+            "Error al obtener los datos públicos de los tickets.",
+          );
+        }
+        return extractedData.map(mapperTicketPublicData);
+      },
+      onSuccess: (data) => {
+        ticketsPublicData.splice(0, ticketsPublicData.length, ...data);
       },
       onError: (_) => {},
     });
@@ -244,6 +265,7 @@ const useTicketStore = defineStore("ticket", () => {
     loading,
     ticketFormState,
     ticketStatus,
+    ticketsPublicData,
     tickets,
     ticketWithOrganizerNumber,
     setDataForm,
@@ -253,6 +275,7 @@ const useTicketStore = defineStore("ticket", () => {
     getRandomAvailableTicket,
     getGeneratedVoucher,
     getTickets,
+    getTicketsPublicData,
     getTicket,
     searchTicketByNumber,
     addTicket,
